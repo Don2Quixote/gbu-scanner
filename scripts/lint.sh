@@ -1,4 +1,5 @@
 golangci-lint run --disable-all \
+    -E revive \
     -E deadcode \
     -E errcheck \
     -E gosimple \
@@ -14,4 +15,7 @@ golangci-lint run --disable-all \
     -E prealloc \
     -E gosec \
     -E gomnd \
-    -E goconst
+    -E goconst \
+    -E misspell \
+    -E nakedret \
+    -E unparam
