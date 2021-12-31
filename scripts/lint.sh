@@ -1,0 +1,17 @@
+golangci-lint run --disable-all \
+    -E deadcode \
+    -E errcheck \
+    -E gosimple \
+    -E govet \
+    -E ineffassign \
+    -E staticcheck \
+    -E structcheck \
+    -E typecheck \
+    -E unused \
+    -E varcheck \
+    -E gocritic \
+    -E lll \
+    -E prealloc \
+    -E gosec \
+    -E gomnd \
+    -E goconst
