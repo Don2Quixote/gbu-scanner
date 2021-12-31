@@ -11,19 +11,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type repository struct {
+// Repository is implementation for scanner.Repository interface
+type Repository struct {
 	mongoDB *mongo.Database
 	log     logger.Logger
 }
 
-func New(mongo *mongo.Client, database string, log logger.Logger) *repository {
-	return &repository{
+// New returns scanner.Repository implementation
+func New(mongo *mongo.Client, database string, log logger.Logger) *Repository {
+	return &Repository{
 		mongoDB: mongo.Database(database),
 		log:     log,
 	}
 }
 
-func (r *repository) AddPublishedPost(ctx context.Context, post entity.Post) error {
+func (r *Repository) AddPublishedPost(ctx context.Context, post entity.Post) error {
 	_, err := r.mongoDB.Collection(publishedPostsCollection).InsertOne(ctx, post)
 	if err != nil {
 		return errors.Wrap(err, "can't insert post")
@@ -31,7 +33,7 @@ func (r *repository) AddPublishedPost(ctx context.Context, post entity.Post) err
 	return nil
 }
 
-func (r *repository) GetPublishedPosts(ctx context.Context) ([]entity.Post, error) {
+func (r *Repository) GetPublishedPosts(ctx context.Context) ([]entity.Post, error) {
 	cursor, err := r.mongoDB.Collection(publishedPostsCollection).Find(ctx, bson.D{}) // bson.D{} means find all
 	if err != nil {
 		return nil, errors.Wrap(err, "can't find records")

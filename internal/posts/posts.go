@@ -15,7 +15,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-type posts struct {
+// Posts is implementation for scanner.Posts interface
+type Posts struct {
 	host       string // Host where blog hosted (go.dev)
 	blogPath   string // Path to all posts (/blog/all)
 	protocol   string // Protocol to use (http or https)
@@ -23,12 +24,13 @@ type posts struct {
 	log        logger.Logger
 }
 
-func New(host string, blogPath string, https bool, client HTTPClient, log logger.Logger) *posts {
+// New returns scanner.Posts implementation
+func New(host string, blogPath string, https bool, client HTTPClient, log logger.Logger) *Posts {
 	protocol := "http"
 	if https {
 		protocol = "https"
 	}
-	return &posts{
+	return &Posts{
 		host:       host,
 		blogPath:   blogPath,
 		protocol:   protocol,
@@ -37,7 +39,7 @@ func New(host string, blogPath string, https bool, client HTTPClient, log logger
 	}
 }
 
-func (p *posts) GetAll(ctx context.Context) ([]entity.Post, error) {
+func (p *Posts) GetAll(ctx context.Context) ([]entity.Post, error) {
 	url := fmt.Sprintf("%s://%s%s", p.protocol, p.host, p.blogPath)
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
 	if err != nil {

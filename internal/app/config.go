@@ -2,6 +2,7 @@ package app
 
 import "gbu-scanner/pkg/logger"
 
+// appConfig is struct for parsing ENV configuration
 type appConfig struct {
 	// BlogHost is host where blog is located (I guess it will always "go.dev")
 	// If BlogHost empty - setDefaults method will set BlogHost, BlogPath and BlogHttps

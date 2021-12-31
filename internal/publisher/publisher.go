@@ -11,18 +11,20 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type publisher struct {
+// Publisher is implementation for scanner.Publisher interface
+type Publisher struct {
 	rabbit *amqp.Channel
 }
 
-func New(rabbit *amqp.Channel) *publisher {
-	return &publisher{
+// New returns scanner.Publisher implementation via rabbitmq
+func New(rabbit *amqp.Channel) *Publisher {
+	return &Publisher{
 		rabbit: rabbit,
 	}
 }
 
 // Init initializes rabbit's entiies like exchanges, queues and queue bindings
-func (p *publisher) Init(ctx context.Context) error {
+func (p *Publisher) Init(ctx context.Context) error {
 	err := p.rabbit.ExchangeDeclare(postsExchange, amqp.ExchangeFanout, true, false, false, false, nil)
 	if err != nil {
 		return errors.Wrap(err, "can't declare exchange")
@@ -30,7 +32,7 @@ func (p *publisher) Init(ctx context.Context) error {
 	return nil
 }
 
-func (p *publisher) Publish(ctx context.Context, post entity.Post) error {
+func (p *Publisher) Publish(ctx context.Context, post entity.Post) error {
 	encoded, err := json.Marshal(post)
 	if err != nil {
 		return errors.Wrap(err, "can't encode post to JSON")

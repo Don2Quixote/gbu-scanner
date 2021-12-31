@@ -10,7 +10,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-type scanner struct {
+// Scanner is struct that incapsulates business-logic's dependencies (interfaces) and configuration
+type Scanner struct {
 	posts     Posts
 	publisher Publisher
 	repo      Repository
@@ -19,8 +20,8 @@ type scanner struct {
 }
 
 // New returns new scanner with main business-logic of this service - method Scan
-func New(posts Posts, publisher Publisher, repo Repository, interval time.Duration, log logger.Logger) *scanner {
-	return &scanner{
+func New(posts Posts, publisher Publisher, repo Repository, interval time.Duration, log logger.Logger) *Scanner {
+	return &Scanner{
 		posts:     posts,
 		publisher: publisher,
 		repo:      repo,
@@ -33,7 +34,7 @@ func New(posts Posts, publisher Publisher, repo Repository, interval time.Durati
 // Once new post posted in blog, information about it published to message broker and
 // consumers (other services) can do whatever they please with this information
 // Scanning current implementation always returns nil-error when context is closed
-func (s *scanner) Scan(ctx context.Context) error {
+func (s *Scanner) Scan(ctx context.Context) error {
 	s.log.Info("starting scanning")
 
 	firstIteration := true
