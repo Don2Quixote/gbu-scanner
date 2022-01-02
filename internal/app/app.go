@@ -51,13 +51,13 @@ func Run(ctx context.Context, log logger.Logger) error {
 		return errors.Wrap(err, "can't ping mongo")
 	}
 
-	rabbitConn, err := rabbit.Dial(cfg.RabbitHost, cfg.RabbitUser, cfg.RabbitPass, cfg.RabbitVhost, cfg.RabbitAmqps)
+	rabbit, err := rabbit.Dial(cfg.RabbitHost, cfg.RabbitUser, cfg.RabbitPass, cfg.RabbitVhost, cfg.RabbitAmqps)
 	if err != nil {
 		return errors.Wrap(err, "can't connect to rabbit")
 	}
-	defer rabbitConn.Close()
+	defer rabbit.Close()
 
-	rabbitChan, err := rabbitConn.Channel()
+	rabbitChan, err := rabbit.Channel()
 	if err != nil {
 		return errors.Wrap(err, "can't get rabbit channel")
 	}
