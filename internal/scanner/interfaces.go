@@ -7,7 +7,7 @@ import (
 )
 
 // Posts is interface for getting posts from blog
-// Implementation gets posts from go.dev/blog/all
+// (Expected that implementation gets posts from go.dev/blog/all)
 type Posts interface {
 	// GetAll returns all available posts from blog
 	// Returned posts are ordered from newest to oldest
@@ -16,7 +16,6 @@ type Posts interface {
 
 // Publisher is interface for interacting with message broker
 // to publish events about new posts
-// Implementation uses rabbitmq as message broker
 type Publisher interface {
 	// Publish publishes post to message broker and
 	// other services can process it anyhow
@@ -25,7 +24,6 @@ type Publisher interface {
 
 // Repository is interface for interacting with storage where
 // information about last published post stored
-// Implementation uses redis as storage
 type Repository interface {
 	// GetPublishedPosts reutrns all posts published to a message broker
 	// Notice: "published posts" is not same thing as "posted in blog"
