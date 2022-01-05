@@ -41,7 +41,7 @@ func New(host string, blogPath string, https bool, client HTTPClient, log logger
 
 func (p *Posts) GetAll(ctx context.Context) ([]entity.Post, error) {
 	url := fmt.Sprintf("%s://%s%s", p.protocol, p.host, p.blogPath)
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "can't create request")
 	}
