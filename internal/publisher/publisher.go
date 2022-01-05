@@ -44,7 +44,7 @@ func (p *Publisher) Publish(ctx context.Context, post entity.Post) error {
 		Body:         encoded,
 	})
 	if err != nil {
-		return errors.Wrap(err, "can't publish post")
+		return errors.Wrap(err, "can't publish message")
 	}
 
 	return nil
