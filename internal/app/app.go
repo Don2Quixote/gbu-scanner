@@ -68,7 +68,9 @@ func Run(ctx context.Context, log logger.Logger) error {
 		return errors.Wrap(err, "can't init publisher")
 	}
 	repo := repository.New(mongo, cfg.MongoDatabase, log)
-	posts := posts.New(cfg.BlogHost, cfg.BlogPath, cfg.BlogHTTPS, http.DefaultClient, log)
+	posts := posts.New(cfg.BlogHost, cfg.BlogPath, cfg.BlogHTTPS, &http.Client{
+		Timeout: time.Duration(cfg.BlogScanNetworkTimeout) * time.Second,
+	}, log)
 	scanner := scanner.New(posts, publisher, repo, time.Duration(cfg.BlogScanInterval)*time.Second, log)
 
 	err = scanner.Scan(ctx)

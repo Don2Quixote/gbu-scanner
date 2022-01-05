@@ -13,6 +13,8 @@ type appConfig struct {
 	BlogHTTPS bool `config:"BLOG_HTTPS"`
 	// BlogScanInterval is delay (in seconds) between blog's scans
 	BlogScanInterval int `config:"BLOG_SCAN_INTERVAL,required"`
+	// BlogScanNetworkTimeout is http client's timeout (in seconds) during request to blog
+	BlogScanNetworkTimeout int `config:"BLOG_SCAN_NETWORK_TIMEOUT,required"`
 	// MongoHost is host of mongodb
 	MongoHost string `config:"MONGO_HOST,required"`
 	// MongoUser is user for mongodb
