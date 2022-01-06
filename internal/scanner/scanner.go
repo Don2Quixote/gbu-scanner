@@ -37,69 +37,10 @@ func New(posts Posts, publisher Publisher, repo Repository, interval time.Durati
 func (s *Scanner) Scan(ctx context.Context) error {
 	s.log.Info("starting scanning")
 
-	firstIteration := true
-	for {
-		// First iteration should not wait
-		if !firstIteration && !sleepWithContext(ctx, s.interval) {
-			break // loop will be stopped if context is closed
-		}
-		firstIteration = false
-
-		posts, err := s.posts.GetAll(ctx)
-		if err != nil {
-			err = errors.Wrap(err, "can't get posts")
-			s.log.Error(err)
-			continue
-		}
-		if len(posts) == 0 {
-			s.log.Warn("0 posts")
-			continue
-		}
-
-		publihsedPosts, err := s.repo.GetPublishedPosts(ctx)
-		if err != nil {
-			err = errors.Wrap(err, "can't get published posts")
-			s.log.Error(err)
-			continue
-		}
-
-		var notPublishedPosts []entity.Post
-		for _, p := range posts {
-			found := false
-			for _, pp := range publihsedPosts {
-				if p.URL == pp.URL {
-					found = true
-					break
-				}
-			}
-			if !found {
-				notPublishedPosts = append(notPublishedPosts, p)
-			}
-		}
-
-		if len(notPublishedPosts) == 0 {
-			s.log.Info("no new posts")
-			continue
-		}
-
-		// Publish not published posts from oldest to newest
-		// (in most cases expected only one not published post per scan iteration)
-		for i := len(notPublishedPosts) - 1; i >= 0; i-- {
-			s.log.Infof("publishing post post %q", notPublishedPosts[i].Title)
-			err = s.publisher.Publish(ctx, notPublishedPosts[i])
-			if err != nil {
-				err = errors.Wrap(err, "can't publish post")
-				s.log.Error(err)
-				continue
-			}
-
-			// The saddest story - post published, but can't submit this information, so post will be published again
-			// It is a problem "at least once / at most once", where I have chosen "at least once"
-			err = s.repo.AddPublishedPost(ctx, notPublishedPosts[i])
-			if err != nil {
-				err = errors.Wrap(err, "can't add published post")
-				s.log.Error(err)
-			}
+	// Loop executes scanning interations with specified inteval (s.interval)
+	for isCtxClosed := false; !isCtxClosed; isCtxClosed = sleepWithContext(ctx, s.interval) {
+		for _, err := range s.scanIteration(ctx) {
+			s.log.Error(errors.Wrap(err, "error during scanning"))
 		}
 	}
 
@@ -108,13 +49,72 @@ func (s *Scanner) Scan(ctx context.Context) error {
 	return nil
 }
 
-// sleepWithContext block for specified time.Duration
-// If context closes sooner than time passes, false returned, true otherwise
+// scanIteration called in Scan method to reduce it's loop's complexity
+// More than one error allowed in iteration so it returns []error
+func (s *Scanner) scanIteration(ctx context.Context) []error {
+	var errs []error
+
+	posts, err := s.posts.GetAll(ctx)
+	if err != nil {
+		return append(errs, errors.Wrap(err, "can't get posts"))
+	}
+	if len(posts) == 0 {
+		s.log.Warn("0 posts")
+		return nil
+	}
+
+	publihsedPosts, err := s.repo.GetPublishedPosts(ctx)
+	if err != nil {
+		return append(errs, errors.Wrap(err, "can't get published posts"))
+	}
+
+	var notPublishedPosts []entity.Post
+	for _, p := range posts {
+		found := false
+		for _, pp := range publihsedPosts {
+			if p.URL == pp.URL {
+				found = true
+				break
+			}
+		}
+		if !found {
+			notPublishedPosts = append(notPublishedPosts, p)
+		}
+	}
+
+	if len(notPublishedPosts) == 0 {
+		s.log.Info("no new posts")
+		return nil
+	}
+
+	// Publish not published posts from oldest to newest
+	// (in most cases expected only one not published post per scan iteration)
+	for i := len(notPublishedPosts) - 1; i >= 0; i-- {
+		s.log.Infof("publishing post post %q", notPublishedPosts[i].Title)
+		err = s.publisher.Publish(ctx, notPublishedPosts[i])
+		if err != nil {
+			errs = append(errs, errors.Wrap(err, "can't publish post"))
+			continue
+		}
+
+		// The saddest story - post published, but can't submit this information, so post will be published again
+		// It is a problem "at least once / at most once", where I have chosen "at least once"
+		err = s.repo.AddPublishedPost(ctx, notPublishedPosts[i])
+		if err != nil {
+			errs = append(errs, errors.Wrap(err, "can't add published post"))
+		}
+	}
+
+	return errs
+}
+
+// sleepWithContext block for specified time.Duration or until context is closed
+// If context closes sooner than time passes, true returned, false otherwise
 func sleepWithContext(ctx context.Context, duration time.Duration) bool {
 	select {
 	case <-ctx.Done():
-		return false
-	case <-time.After(duration):
 		return true
+	case <-time.After(duration):
+		return false
 	}
 }
