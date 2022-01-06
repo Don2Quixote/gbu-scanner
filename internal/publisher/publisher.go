@@ -81,10 +81,11 @@ func (p *Publisher) Init(ctx context.Context) error {
 		closeErr := <-errs // This chan will get a value when rabbit channel will be closed
 		p.log.Error(errors.Wrap(closeErr, "rabbit channel closed"))
 
-		// There is a chance that if channel closed, it doesn't mean connection is closed too
-		err := conn.Close()
-		if err != nil {
-			p.log.Warn("can't close rabbit connection")
+		if !conn.IsClosed() {
+			err := conn.Close()
+			if err != nil {
+				p.log.Error(errors.Wrap(err, "can't close rabbit connection"))
+			}
 		}
 
 		isConnected := false
