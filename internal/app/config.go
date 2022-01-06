@@ -35,6 +35,8 @@ type appConfig struct {
 	RabbitVhost string `config:"RABBIT_VHOST"`
 	// RabbitAmqps flag shows should amqps protocol be used instead of amqp or not
 	RabbitAmqps bool `config:"RABBIT_AMQPS"`
+	// RabbitReconnectDelay is delay (in seconds) before attempting to reconnect to rabbit after loosing connection
+	RabbitReconnectDelay int `config:"RABBIT_RECONNECT_DELAY,required"`
 }
 
 // setDefaults sets some default config variables if they are empty

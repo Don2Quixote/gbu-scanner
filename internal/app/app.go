@@ -13,7 +13,6 @@ import (
 	"gbu-scanner/pkg/config"
 	"gbu-scanner/pkg/logger"
 	"gbu-scanner/pkg/wrappers/mongo"
-	"gbu-scanner/pkg/wrappers/rabbit"
 
 	"github.com/pkg/errors"
 )
@@ -51,18 +50,14 @@ func Run(ctx context.Context, log logger.Logger) error {
 		return errors.Wrap(err, "can't ping mongo")
 	}
 
-	rabbit, err := rabbit.Dial(cfg.RabbitHost, cfg.RabbitUser, cfg.RabbitPass, cfg.RabbitVhost, cfg.RabbitAmqps)
-	if err != nil {
-		return errors.Wrap(err, "can't connect to rabbit")
-	}
-	defer rabbit.Close()
-
-	rabbitChan, err := rabbit.Channel()
-	if err != nil {
-		return errors.Wrap(err, "can't get rabbit channel")
-	}
-
-	publisher := publisher.New(rabbitChan)
+	publisher := publisher.New(publisher.RabbitConfig{
+		Host:           cfg.RabbitHost,
+		User:           cfg.RabbitUser,
+		Pass:           cfg.RabbitPass,
+		Vhost:          cfg.RabbitVhost,
+		Amqps:          cfg.RabbitAmqps,
+		ReconnectDelay: time.Duration(cfg.RabbitReconnectDelay) * time.Second,
+	}, log)
 	err = publisher.Init(ctx)
 	if err != nil {
 		return errors.Wrap(err, "can't init publisher")

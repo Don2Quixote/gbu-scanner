@@ -90,6 +90,7 @@ func (s *Scanner) Scan(ctx context.Context) error {
 			if err != nil {
 				err = errors.Wrap(err, "can't publish post")
 				s.log.Error(err)
+				continue
 			}
 
 			// The saddest story - post published, but can't submit this information, so post will be published again
