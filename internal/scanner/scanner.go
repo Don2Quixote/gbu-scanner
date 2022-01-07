@@ -93,7 +93,8 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 	// Publish not published posts from oldest to newest
 	// (in most cases expected only one not published post per scan iteration)
 	for i := len(notPublishedPosts) - 1; i >= 0; i-- {
-		s.log.Infof("publishing post post %q", notPublishedPosts[i].Title)
+		s.log.Infof("publishing post %q", notPublishedPosts[i].Title)
+
 		err = s.publisher.Publish(ctx, notPublishedPosts[i])
 		if err != nil {
 			errs = append(errs, errors.Wrap(err, "can't publish post"))
