@@ -5,7 +5,9 @@ import (
 	"time"
 
 	"gbu-scanner/internal/entity"
+
 	"gbu-scanner/pkg/logger"
+	"gbu-scanner/pkg/sleep"
 
 	"github.com/pkg/errors"
 )
@@ -38,7 +40,7 @@ func (s *Scanner) Scan(ctx context.Context) error {
 	s.log.Info("starting scanning")
 
 	// Loop executes scanning interations with specified inteval (s.interval)
-	for isCtxClosed := false; !isCtxClosed; isCtxClosed = sleepWithContext(ctx, s.interval) {
+	for isCtxClosed := false; !isCtxClosed; isCtxClosed = sleep.WithContext(ctx, s.interval) {
 		for _, err := range s.scanIteration(ctx) {
 			s.log.Error(errors.Wrap(err, "error during scanning"))
 		}
@@ -106,15 +108,4 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 	}
 
 	return errs
-}
-
-// sleepWithContext block for specified time.Duration or until context is closed
-// If context closes sooner than time passes, true returned, false otherwise
-func sleepWithContext(ctx context.Context, duration time.Duration) bool {
-	select {
-	case <-ctx.Done():
-		return true
-	case <-time.After(duration):
-		return false
-	}
 }
