@@ -37,8 +37,8 @@ func Run(ctx context.Context, log logger.Logger) error {
 		}
 	}()
 
-	// Constructing dependencies for scanner
-	posts, publisher, repo, err := construct(ctx, cfg, mongo, log)
+	// Making dependencies for scanner
+	posts, publisher, repo, err := makeDependencies(ctx, cfg, mongo, log)
 	if err != nil {
 		return errors.Wrap(err, "can't construct dependencies")
 	}

@@ -16,8 +16,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// construct constructs all scanner's dependencies
-func construct(ctx context.Context,
+// makeDependencies maeks all scanner's dependencies
+func makeDependencies(ctx context.Context,
 	cfg appConfig,
 	mongo *mongo.Client,
 	log logger.Logger,
