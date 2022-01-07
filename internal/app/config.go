@@ -42,7 +42,7 @@ type appConfig struct {
 // setDefaults sets some default config variables if they are empty
 func (c *appConfig) setDefaults(log logger.Logger) {
 	if c.BlogHost == "" {
-		log.Warn("BlogHost config var is empty, setting BlogHost, BlogPath and BlogHttps to defaults")
+		log.Warn("BlogHost config var is empty, setting BlogHost, BlogPath and BlogHTTPS to defaults")
 		c.BlogHost = "go.dev"
 		c.BlogPath = "/blog/all"
 		c.BlogHTTPS = true

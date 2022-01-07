@@ -2,17 +2,12 @@ package app
 
 import (
 	"context"
-	"net/http"
 	"time"
 
-	"gbu-scanner/internal/posts"
-	"gbu-scanner/internal/publisher"
-	"gbu-scanner/internal/repository"
 	"gbu-scanner/internal/scanner"
 
 	"gbu-scanner/pkg/config"
 	"gbu-scanner/pkg/logger"
-	"gbu-scanner/pkg/wrappers/mongo"
 
 	"github.com/pkg/errors"
 )
@@ -22,6 +17,7 @@ import (
 func Run(ctx context.Context, log logger.Logger) error {
 	log.Info("starting app")
 
+	// Getting configuration
 	var cfg appConfig
 	err := config.Parse(&cfg)
 	if err != nil {
@@ -29,14 +25,10 @@ func Run(ctx context.Context, log logger.Logger) error {
 	}
 	cfg.setDefaults(log)
 
-	mongo, err := mongo.NewClient(cfg.MongoHost, cfg.MongoUser, cfg.MongoPass, cfg.MongoSRV)
+	// Getting required connections/clients
+	mongo, err := makeConnections(ctx, cfg)
 	if err != nil {
-		return errors.Wrap(err, "can't create mongo client")
-	}
-
-	err = mongo.Connect(ctx)
-	if err != nil {
-		return errors.Wrap(err, "can't connect to mongo")
+		return errors.Wrap(err, "can't make connections")
 	}
 	defer func() {
 		err := mongo.Disconnect(ctx)
@@ -45,30 +37,15 @@ func Run(ctx context.Context, log logger.Logger) error {
 		}
 	}()
 
-	err = mongo.Ping(ctx, nil)
+	// Constructing dependencies for scanner
+	posts, publisher, repo, err := construct(ctx, cfg, mongo, log)
 	if err != nil {
-		return errors.Wrap(err, "can't ping mongo")
+		return errors.Wrap(err, "can't construct dependencies")
 	}
 
-	publisher := publisher.New(publisher.RabbitConfig{
-		Host:           cfg.RabbitHost,
-		User:           cfg.RabbitUser,
-		Pass:           cfg.RabbitPass,
-		Vhost:          cfg.RabbitVhost,
-		Amqps:          cfg.RabbitAmqps,
-		ReconnectDelay: time.Duration(cfg.RabbitReconnectDelay) * time.Second,
-	}, log)
-	err = publisher.Init(ctx)
-	if err != nil {
-		return errors.Wrap(err, "can't init publisher")
-	}
-	repo := repository.New(mongo, cfg.MongoDatabase, log)
-	posts := posts.New(cfg.BlogHost, cfg.BlogPath, cfg.BlogHTTPS, &http.Client{
-		Timeout: time.Duration(cfg.BlogScanNetworkTimeout) * time.Second,
-	}, log)
-	scanner := scanner.New(posts, publisher, repo, time.Duration(cfg.BlogScanInterval)*time.Second, log)
-
-	err = scanner.Scan(ctx)
+	// Constructing and launching scanner
+	blogScanInterval := time.Duration(cfg.BlogScanInterval) * time.Second
+	err = scanner.New(posts, publisher, repo, blogScanInterval, log).Scan(ctx)
 	if err != nil {
 		return errors.Wrap(err, "error during scanning")
 	}
