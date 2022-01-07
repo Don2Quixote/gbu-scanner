@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// makeConnections returns required connections/clients
+// makeConnections makes required connections/clients
 func makeConnections(ctx context.Context, cfg appConfig) (*mongo.Client, error) {
 	mongo, err := mongo.NewClient(cfg.MongoHost, cfg.MongoUser, cfg.MongoPass, cfg.MongoSRV)
 	if err != nil {
