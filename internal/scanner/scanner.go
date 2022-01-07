@@ -39,7 +39,7 @@ func New(posts Posts, publisher Publisher, repo Repository, interval time.Durati
 func (s *Scanner) Scan(ctx context.Context) error {
 	s.log.Info("starting scanning")
 
-	// Loop executes scanning interations with specified inteval (s.interval)
+	// Loop executes scanning interations with specified inteval (s.interval) until context closed
 	for isCtxClosed := false; !isCtxClosed; isCtxClosed = sleep.WithContext(ctx, s.interval) {
 		for _, err := range s.scanIteration(ctx) {
 			s.log.Error(errors.Wrap(err, "error during scanning"))
