@@ -41,7 +41,8 @@ func (s *Scanner) Scan(ctx context.Context) error {
 
 	// Loop executes scanning interations with specified inteval (s.interval) until context closed
 	for isCtxClosed := false; !isCtxClosed; isCtxClosed = sleep.WithContext(ctx, s.interval) {
-		for _, err := range s.scanIteration(ctx) {
+		errs := s.scanIteration(ctx)
+		for _, err := range errs {
 			s.log.Error(errors.Wrap(err, "error during scanning"))
 		}
 	}
