@@ -20,3 +20,6 @@ func NewClient(host, user, pass string, srv bool) (*mongo.Client, error) {
 	}
 	return mongo.NewClient(options.Client().ApplyURI(connString))
 }
+
+// Forward type
+type Client = mongo.Client
