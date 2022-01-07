@@ -1,3 +1,4 @@
+# TODO: Better to put linter's configuration to .golangci.yml
 golangci-lint run --disable-all \
     -E revive \
     -E deadcode \
