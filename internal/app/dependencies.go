@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"gbu-scanner/internal/posts"
+	"gbu-scanner/internal/blog"
 	"gbu-scanner/internal/publisher"
 	"gbu-scanner/internal/repository"
 	"gbu-scanner/internal/scanner"
@@ -22,7 +22,7 @@ func makeDependencies(ctx context.Context,
 	mongo *mongo.Client,
 	log logger.Logger,
 ) (
-	scanner.Posts,
+	scanner.Blog,
 	scanner.Publisher,
 	scanner.Repository,
 	error,
@@ -42,9 +42,9 @@ func makeDependencies(ctx context.Context,
 
 	repo := repository.New(mongo, cfg.MongoDatabase, log)
 
-	posts := posts.New(cfg.BlogHost, cfg.BlogPath, cfg.BlogHTTPS, &http.Client{
+	blog := blog.New(cfg.BlogHost, cfg.BlogPath, cfg.BlogHTTPS, &http.Client{
 		Timeout: time.Duration(cfg.BlogScanNetworkTimeout) * time.Second,
 	}, log)
 
-	return posts, publisher, repo, nil
+	return blog, publisher, repo, nil
 }

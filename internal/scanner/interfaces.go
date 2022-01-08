@@ -6,12 +6,12 @@ import (
 	"gbu-scanner/internal/entity"
 )
 
-// Posts is interface for getting posts from blog
+// Blog is interface for getting posts from blog
 // (Expected that implementation gets posts from go.dev/blog/all)
-type Posts interface {
-	// GetAll returns all available posts from blog
+type Blog interface {
+	// GetPosts returns all available posts from blog
 	// Returned posts are ordered from newest to oldest
-	GetAll(context.Context) ([]entity.Post, error)
+	GetPosts(context.Context) ([]entity.Post, error)
 }
 
 // Publisher is interface for interacting with message broker

@@ -14,7 +14,7 @@ import (
 
 // Scanner is struct that incapsulates business-logic's dependencies (interfaces) and configuration
 type Scanner struct {
-	posts     Posts
+	blog      Blog
 	publisher Publisher
 	repo      Repository
 	interval  time.Duration
@@ -22,9 +22,9 @@ type Scanner struct {
 }
 
 // New returns new scanner with main business-logic of this service - method Scan
-func New(posts Posts, publisher Publisher, repo Repository, interval time.Duration, log logger.Logger) *Scanner {
+func New(blog Blog, publisher Publisher, repo Repository, interval time.Duration, log logger.Logger) *Scanner {
 	return &Scanner{
-		posts:     posts,
+		blog:      blog,
 		publisher: publisher,
 		repo:      repo,
 		interval:  interval,
@@ -57,7 +57,7 @@ func (s *Scanner) Scan(ctx context.Context) error {
 func (s *Scanner) scanIteration(ctx context.Context) []error {
 	var errs []error
 
-	posts, err := s.posts.GetAll(ctx)
+	posts, err := s.blog.GetPosts(ctx)
 	if err != nil {
 		return append(errs, errors.Wrap(err, "can't get posts"))
 	}
