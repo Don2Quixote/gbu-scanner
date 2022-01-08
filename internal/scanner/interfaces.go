@@ -22,15 +22,13 @@ type Publisher interface {
 	Publish(context.Context, entity.Post) error
 }
 
-// Repository is interface for interacting with storage where
-// information about last published post stored
-type Repository interface {
-	// GetPublishedPosts reutrns all posts published to a message broker
-	// Notice: "published posts" is not same thing as "posted in blog"
-	// "Published" means "published to message broker"
-	GetPublishedPosts(ctx context.Context) ([]entity.Post, error)
-	// AddPublishedPost saves post to list of published posts
-	// Notice: "published posts" is not same thing as "posted in blog"
-	// "Published" means "published to message broker"
-	AddPublishedPost(ctx context.Context, post entity.Post) error
+// Posts is interface for interacting with storage where
+// information about published posts stored
+// Notice: "published posts" is not same thing as "posted in blog"
+// "Published" means "published to message broker"
+type Posts interface {
+	// Add saves post to list of published posts
+	Add(ctx context.Context, post entity.Post) error
+	// GetAll reutrns all posts published to a message broker
+	GetAll(ctx context.Context) ([]entity.Post, error)
 }

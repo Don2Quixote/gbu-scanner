@@ -38,14 +38,14 @@ func Run(ctx context.Context, log logger.Logger) error {
 	}()
 
 	// Making dependencies for scanner
-	blog, publisher, repo, err := makeDependencies(ctx, cfg, mongo, log)
+	blog, publisher, posts, err := makeDependencies(ctx, cfg, mongo, log)
 	if err != nil {
 		return errors.Wrap(err, "can't construct dependencies")
 	}
 
 	// Constructing and launching scanner
 	blogScanInterval := time.Duration(cfg.BlogScanInterval) * time.Second
-	err = scanner.New(blog, publisher, repo, blogScanInterval, log).Scan(ctx)
+	err = scanner.New(blog, publisher, posts, blogScanInterval, log).Scan(ctx)
 	if err != nil {
 		return errors.Wrap(err, "error during scanning")
 	}

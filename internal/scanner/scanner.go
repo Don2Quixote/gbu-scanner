@@ -16,17 +16,17 @@ import (
 type Scanner struct {
 	blog      Blog
 	publisher Publisher
-	repo      Repository
+	posts     Posts
 	interval  time.Duration
 	log       logger.Logger
 }
 
 // New returns new scanner with main business-logic of this service - method Scan
-func New(blog Blog, publisher Publisher, repo Repository, interval time.Duration, log logger.Logger) *Scanner {
+func New(blog Blog, publisher Publisher, posts Posts, interval time.Duration, log logger.Logger) *Scanner {
 	return &Scanner{
 		blog:      blog,
 		publisher: publisher,
-		repo:      repo,
+		posts:     posts,
 		interval:  interval,
 		log:       log,
 	}
@@ -66,7 +66,7 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 		return nil
 	}
 
-	publihsedPosts, err := s.repo.GetPublishedPosts(ctx)
+	publihsedPosts, err := s.posts.GetAll(ctx)
 	if err != nil {
 		return append(errs, errors.Wrap(err, "can't get published posts"))
 	}
@@ -103,7 +103,7 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 
 		// The saddest story - post published, but can't submit this information, so post will be published again
 		// It is a problem "at least once / at most once", where I have chosen "at least once"
-		err = s.repo.AddPublishedPost(ctx, notPublishedPosts[i])
+		err = s.posts.Add(ctx, notPublishedPosts[i])
 		if err != nil {
 			errs = append(errs, errors.Wrap(err, "can't add published post"))
 		}

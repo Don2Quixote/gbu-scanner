@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"gbu-scanner/internal/blog"
+	"gbu-scanner/internal/posts"
 	"gbu-scanner/internal/publisher"
-	"gbu-scanner/internal/repository"
 	"gbu-scanner/internal/scanner"
 
 	"gbu-scanner/pkg/logger"
@@ -24,7 +24,7 @@ func makeDependencies(ctx context.Context,
 ) (
 	scanner.Blog,
 	scanner.Publisher,
-	scanner.Repository,
+	scanner.Posts,
 	error,
 ) {
 	publisher := publisher.New(publisher.RabbitConfig{
@@ -40,11 +40,11 @@ func makeDependencies(ctx context.Context,
 		return nil, nil, nil, errors.Wrap(err, "can't init publisher")
 	}
 
-	repo := repository.New(mongo, cfg.MongoDatabase, log)
+	posts := posts.New(mongo, cfg.MongoDatabase, log)
 
 	blog := blog.New(cfg.BlogHost, cfg.BlogPath, cfg.BlogHTTPS, &http.Client{
 		Timeout: time.Duration(cfg.BlogScanNetworkTimeout) * time.Second,
 	}, log)
 
-	return blog, publisher, repo, nil
+	return blog, publisher, posts, nil
 }

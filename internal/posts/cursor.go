@@ -1,4 +1,4 @@
-package repository
+package posts
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (r *Repository) closeCursor(ctx context.Context, cur *mongo.Cursor) {
+func (r *Posts) closeCursor(ctx context.Context, cur *mongo.Cursor) {
 	err := cur.Close(ctx)
 	if err != nil {
 		err = errors.Wrap(err, "can't close cursor")
