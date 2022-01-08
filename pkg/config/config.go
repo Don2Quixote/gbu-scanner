@@ -11,7 +11,7 @@ import (
 // Parse is a wrapper around package confita to parse env variables into struct
 // Example:
 // var cfg struct {
-//     Value string `config:"value,required"`
+//     Value string `config:"VALUE,required"`
 // }
 // err = config.Parse(&cfg)
 func Parse(cfg interface{}) error {
