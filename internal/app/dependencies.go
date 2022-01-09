@@ -17,7 +17,8 @@ import (
 )
 
 // makeDependencies maeks all scanner's dependencies.
-func makeDependencies(ctx context.Context,
+func makeDependencies(
+	ctx context.Context,
 	cfg appConfig,
 	mongo *mongo.Client,
 	log logger.Logger,
