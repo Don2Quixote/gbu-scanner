@@ -31,7 +31,7 @@ func Run(ctx context.Context, log logger.Logger) error {
 		return errors.Wrap(err, "can't make connections")
 	}
 	defer func() {
-		err := mongo.Disconnect(ctx)
+		err := mongo.Disconnect(ctx) // Disconnects without error if context closed
 		if err != nil {
 			log.Error(errors.Wrap(err, "can't disconnect mongo client"))
 		}
