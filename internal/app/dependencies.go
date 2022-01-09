@@ -41,6 +41,10 @@ func makeDependencies(ctx context.Context,
 	}
 
 	posts := posts.New(mongo, cfg.MongoDatabase, log)
+	err = posts.Init(ctx)
+	if err != nil {
+		return nil, nil, nil, errors.Wrap(err, "can't init database")
+	}
 
 	blog := blog.New(cfg.BlogHost, cfg.BlogPath, cfg.BlogHTTPS, &http.Client{
 		Timeout: time.Duration(cfg.BlogScanNetworkTimeout) * time.Second,

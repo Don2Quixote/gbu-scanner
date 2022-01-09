@@ -27,6 +27,7 @@ type Publisher interface {
 // Notice: "published posts" is not same thing as "posted in blog":
 // "Published" means "published to message broker".
 type Posts interface {
+	Transaction(ctx context.Context, fn func(txCtx context.Context) error) error
 	// Add saves post to list of published posts
 	Add(ctx context.Context, post entity.Post) error
 	// GetAll reutrns all posts published to a message broker

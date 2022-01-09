@@ -67,50 +67,55 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 		return nil
 	}
 
-	publihsedPosts, err := s.posts.GetAll(ctx)
-	if err != nil {
-		return append(errs, errors.Wrap(err, "can't get published posts"))
-	}
+	// Always returns nil, all errors written to errs slice
+	_ = s.posts.Transaction(ctx, func(txCtx context.Context) error {
+		publihsedPosts, err := s.posts.GetAll(ctx)
+		if err != nil {
+			errs = append(errs, errors.Wrap(err, "can't get published posts"))
+		}
 
-	var notPublishedPosts []entity.Post
-	for _, p := range posts {
-		isFound := false
+		var notPublishedPosts []entity.Post
+		for _, p := range posts {
+			isFound := false
 
-		for _, pp := range publihsedPosts {
-			if p.URL == pp.URL {
-				isFound = true
-				break
+			for _, pp := range publihsedPosts {
+				if p.URL == pp.URL {
+					isFound = true
+					break
+				}
+			}
+
+			if !isFound {
+				notPublishedPosts = append(notPublishedPosts, p)
 			}
 		}
 
-		if !isFound {
-			notPublishedPosts = append(notPublishedPosts, p)
+		if len(notPublishedPosts) == 0 {
+			s.log.Info("no new posts")
+			return nil
 		}
-	}
 
-	if len(notPublishedPosts) == 0 {
-		s.log.Info("no new posts")
+		// Publish not published posts from oldest to newest
+		// (in most cases expected only one not published post per scan iteration)
+		for i := len(notPublishedPosts) - 1; i >= 0; i-- {
+			s.log.Infof("publishing post %q", notPublishedPosts[i].Title)
+
+			err = s.publisher.Publish(ctx, notPublishedPosts[i])
+			if err != nil {
+				errs = append(errs, errors.Wrap(err, "can't publish post"))
+				continue
+			}
+
+			// The saddest story - post published, but can't submit this information, so post will be published again
+			// It is a problem "at least once / at most once", where I have chosen "at least once"
+			err = s.posts.Add(ctx, notPublishedPosts[i])
+			if err != nil {
+				errs = append(errs, errors.Wrap(err, "can't add published post"))
+			}
+		}
+
 		return nil
-	}
-
-	// Publish not published posts from oldest to newest
-	// (in most cases expected only one not published post per scan iteration)
-	for i := len(notPublishedPosts) - 1; i >= 0; i-- {
-		s.log.Infof("publishing post %q", notPublishedPosts[i].Title)
-
-		err = s.publisher.Publish(ctx, notPublishedPosts[i])
-		if err != nil {
-			errs = append(errs, errors.Wrap(err, "can't publish post"))
-			continue
-		}
-
-		// The saddest story - post published, but can't submit this information, so post will be published again
-		// It is a problem "at least once / at most once", where I have chosen "at least once"
-		err = s.posts.Add(ctx, notPublishedPosts[i])
-		if err != nil {
-			errs = append(errs, errors.Wrap(err, "can't add published post"))
-		}
-	}
+	})
 
 	return errs
 }
