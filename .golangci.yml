@@ -21,3 +21,6 @@
     - nakedret
     - unparam
     - tagliatelle
+    - bodyclose
+    - goerr113
+    - wastedassign
