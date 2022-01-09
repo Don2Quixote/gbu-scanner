@@ -61,6 +61,7 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 	if err != nil {
 		return append(errs, errors.Wrap(err, "can't get posts"))
 	}
+
 	if len(posts) == 0 {
 		s.log.Warn("0 posts")
 		return nil
@@ -73,14 +74,16 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 
 	var notPublishedPosts []entity.Post
 	for _, p := range posts {
-		found := false
+		isFound := false
+
 		for _, pp := range publihsedPosts {
 			if p.URL == pp.URL {
-				found = true
+				isFound = true
 				break
 			}
 		}
-		if !found {
+
+		if !isFound {
 			notPublishedPosts = append(notPublishedPosts, p)
 		}
 	}
