@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Scanner is struct that incapsulates business-logic's dependencies (interfaces) and configuration
+// Scanner is struct that incapsulates business-logic's dependencies (interfaces) and configuration.
 type Scanner struct {
 	blog      Blog
 	publisher Publisher
@@ -21,7 +21,7 @@ type Scanner struct {
 	log       logger.Logger
 }
 
-// New returns new scanner with main business-logic of this service - method Scan
+// New returns new scanner with main business-logic of this service - method Scan.
 func New(blog Blog, publisher Publisher, posts Posts, interval time.Duration, log logger.Logger) *Scanner {
 	return &Scanner{
 		blog:      blog,
@@ -32,10 +32,10 @@ func New(blog Blog, publisher Publisher, posts Posts, interval time.Duration, lo
 	}
 }
 
-// Scan is a blocking method until context cancelled, it does blog's posts scanning in a loop
+// Scan is a blocking method until context cancelled, it does blog's posts scanning in a loop.
 // Once new post posted in blog, information about it published to message broker and
-// consumers (other services) can do whatever they please with this information
-// Scanning current implementation always returns nil-error when context is closed
+// consumers (other services) can do whatever they please with this information.
+// Scan's current implementation always returns nil-error when context is closed.
 func (s *Scanner) Scan(ctx context.Context) error {
 	s.log.Info("starting scanning")
 
@@ -52,8 +52,8 @@ func (s *Scanner) Scan(ctx context.Context) error {
 	return nil
 }
 
-// scanIteration called in Scan method to reduce it's loop's complexity
-// More than one error allowed in iteration so it returns []error
+// scanIteration called in Scan method to reduce it's loop's complexity.
+// More than one error allowed in iteration so it returns []error.
 func (s *Scanner) scanIteration(ctx context.Context) []error {
 	var errs []error
 

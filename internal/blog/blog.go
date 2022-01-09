@@ -15,7 +15,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Blog is implementation for scanner.Blog interface
+// Blog is implementation for scanner.Blog interface.
 type Blog struct {
 	host       string // Host where blog hosted (go.dev)
 	blogPath   string // Path to all posts (/blog/all)
@@ -24,7 +24,7 @@ type Blog struct {
 	log        logger.Logger
 }
 
-// New returns scanner.Blog implementation
+// New returns scanner.Blog implementation.
 func New(host string, blogPath string, https bool, client HTTPClient, log logger.Logger) *Blog {
 	protocol := "http"
 	if https {

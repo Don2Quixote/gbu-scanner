@@ -15,7 +15,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-// Publisher is implementation for scanner.Publisher interface
+// Publisher is implementation for scanner.Publisher interface.
 type Publisher struct {
 	rabbitConfig RabbitConfig
 	rabbit       *amqp.Channel
@@ -25,7 +25,7 @@ type Publisher struct {
 	mu *sync.RWMutex
 }
 
-// New returns scanner.Publisher implementation via rabbitmq
+// New returns scanner.Publisher implementation via rabbitmq.
 func New(rabbitConfig RabbitConfig, log logger.Logger) *Publisher {
 	return &Publisher{
 		rabbitConfig: rabbitConfig,
@@ -37,7 +37,7 @@ func New(rabbitConfig RabbitConfig, log logger.Logger) *Publisher {
 
 // Init connects to rabbit and gets rabbit channel, after what
 // initializes rabbit's entiies like exchanges, queues etc.
-// It also registers a handler for channel closed event to reconnect
+// It also registers a handler for channel closed event to reconnect.
 func (p *Publisher) Init(ctx context.Context) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()

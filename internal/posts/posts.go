@@ -12,13 +12,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Posts is implementation for scanner.Posts interface
+// Posts is implementation for scanner.Posts interface.
 type Posts struct {
 	mongoDB *mongo.Database
 	log     logger.Logger
 }
 
-// New returns scanner.Posts implementation
+// New returns scanner.Posts implementation.
 func New(mongo *mongo.Client, database string, log logger.Logger) *Posts {
 	return &Posts{
 		mongoDB: mongo.Database(database),

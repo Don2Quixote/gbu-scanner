@@ -4,7 +4,7 @@ type nop struct{}
 
 var _ Logger = nop{}
 
-// NewNop returns nop (No Operation) logger, which does nothing on calls
+// NewNop returns nop (No Operation) logger, which does nothing on calls.
 func NewNop() Logger {
 	return nop{}
 }

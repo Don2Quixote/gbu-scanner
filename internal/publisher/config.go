@@ -2,7 +2,7 @@ package publisher
 
 import "time"
 
-// RabbitConfig is configuration for rabbitmq's connection
+// RabbitConfig is configuration for rabbitmq's connection.
 type RabbitConfig struct {
 	// Host of rabbitmq
 	Host string

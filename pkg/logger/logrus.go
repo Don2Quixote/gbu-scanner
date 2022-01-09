@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// NewLogrus returns setted up logrus logger
+// NewLogrus returns setted up logrus logger.
 func NewLogrus() *logrus.Logger {
 	return &logrus.Logger{
 		Out:   os.Stdout,

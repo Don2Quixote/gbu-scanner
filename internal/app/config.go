@@ -2,7 +2,7 @@ package app
 
 import "gbu-scanner/pkg/logger"
 
-// appConfig is struct for parsing ENV configuration
+// appConfig is struct for parsing ENV configuration.
 type appConfig struct {
 	// BlogHost is host where blog is located (I guess it will always "go.dev")
 	// If BlogHost empty - setDefaults method will set BlogHost, BlogPath and BlogHttps
@@ -39,7 +39,7 @@ type appConfig struct {
 	RabbitReconnectDelay int `config:"RABBIT_RECONNECT_DELAY,required"`
 }
 
-// setDefaults sets some default config variables if they are empty
+// setDefaults sets some default config variables if they are empty.
 func (c *appConfig) setDefaults(log logger.Logger) {
 	if c.BlogHost == "" {
 		log.Warn("BlogHost config var is empty, setting BlogHost, BlogPath and BlogHTTPS to defaults")

@@ -9,7 +9,7 @@ import (
 )
 
 // Connect is wrapper for original mongo.Connect function but with
-// credential-parameters instead of connection string
+// credential-parameters instead of connection string.
 func Connect(ctx context.Context, host, user, pass string, srv bool) (*mongo.Client, error) {
 	claims := ""
 	if user != "" {
@@ -25,5 +25,5 @@ func Connect(ctx context.Context, host, user, pass string, srv bool) (*mongo.Cli
 	return mongo.Connect(ctx, options.Client().ApplyURI(connString))
 }
 
-// Forward type
+// Client is forward type.
 type Client = mongo.Client

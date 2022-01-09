@@ -16,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// makeDependencies maeks all scanner's dependencies
+// makeDependencies maeks all scanner's dependencies.
 func makeDependencies(ctx context.Context,
 	cfg appConfig,
 	mongo *mongo.Client,

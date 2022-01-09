@@ -1,7 +1,7 @@
 package logger
 
-// Logger interface is a wrapper for Debug, Info, Warn, Error and Fatal methods
-// Can be used to allow logger's substitution
+// Logger interface is a wrapper for Debug, Info, Warn, Error and Fatal methods.
+// Can be used to allow logger's substitution.
 type Logger interface {
 	Debug(args ...interface{})
 	Debugf(format string, args ...interface{})
