@@ -18,6 +18,7 @@ func Connect(ctx context.Context, host, user, pass string, srv bool) (*mongo.Cli
 
 	connString := fmt.Sprintf("mongodb://%s%s", claims, host)
 	if srv {
+		// https://docs.mongodb.com/manual/reference/connection-string/#dns-seed-list-connection-format
 		connString = fmt.Sprintf("mongodb+srv://%s%s", claims, host)
 	}
 
