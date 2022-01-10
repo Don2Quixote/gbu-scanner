@@ -64,6 +64,7 @@ func (p *Blog) GetPosts(ctx context.Context) ([]entity.Post, error) {
 		return nil, errors.Wrap(err, "can't get document from response")
 	}
 
+	// Very difficutl to describe with comments, how does this HTML-parsing works
 	elements := doc.Find(".blogtitle")
 	posts := make([]entity.Post, 0, elements.Length())
 	elements.Each(func(i int, blogtitle *goquery.Selection) {
