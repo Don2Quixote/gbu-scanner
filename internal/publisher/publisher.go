@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"gbu-scanner/internal/entity"
+	"gbu-scanner/internal/scanner"
 
 	"gbu-scanner/pkg/logger"
 	"gbu-scanner/pkg/wrappers/rabbit"
@@ -25,6 +26,8 @@ type Publisher struct {
 	// RWMutex RLocks used to use connection
 	mu *sync.RWMutex
 }
+
+var _ scanner.Publisher = &Publisher{}
 
 // New returns scanner.Publisher implementation via rabbitmq.
 func New(rabbitConfig RabbitConfig, log logger.Logger) *Publisher {

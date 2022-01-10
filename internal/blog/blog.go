@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"gbu-scanner/internal/entity"
+	"gbu-scanner/internal/scanner"
 
 	"gbu-scanner/pkg/logger"
 
@@ -23,6 +24,8 @@ type Blog struct {
 	httpClient HTTPClient
 	log        logger.Logger
 }
+
+var _ scanner.Blog = &Blog{}
 
 // New returns scanner.Blog implementation.
 func New(host string, blogPath string, https bool, client HTTPClient, log logger.Logger) *Blog {

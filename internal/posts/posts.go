@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"gbu-scanner/internal/entity"
+	"gbu-scanner/internal/scanner"
 
 	"gbu-scanner/pkg/logger"
 
@@ -21,6 +22,8 @@ type Posts struct {
 	mongoDB *mongo.Database
 	log     logger.Logger
 }
+
+var _ scanner.Posts = &Posts{}
 
 // New returns scanner.Posts implementation.
 func New(mongo *mongo.Client, database string, log logger.Logger) *Posts {
