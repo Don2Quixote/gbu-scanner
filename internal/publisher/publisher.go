@@ -72,19 +72,19 @@ func (p *Publisher) Init(ctx context.Context) error {
 			}
 		}
 
-		isConnected := false
-		attempt := 1
-		for !isConnected {
+		for attempt, isConnected := 1, false; !isConnected; attempt++ {
 			time.Sleep(cfg.ReconnectDelay)
+
 			err := p.Init(ctx)
 			if err != nil {
-				p.log.Warn(errors.Wrapf(err, "can't connect to rabbit (attempt #%d)", attempt))
-			} else {
-				p.log.Info("reconnected to rabbit")
-				isConnected = true
+				p.log.Warn(errors.Wrapf(err, "can't re-init publisher (attempt #%d)", attempt))
+				continue
 			}
-			attempt++
+
+			isConnected = true
 		}
+
+		p.log.Info("reconnected to rabbit")
 	}
 	go handleChannelClose()
 
