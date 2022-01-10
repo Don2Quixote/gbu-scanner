@@ -20,6 +20,7 @@ type Publisher struct {
 	rabbitConfig RabbitConfig
 	rabbit       *amqp.Channel
 	log          logger.Logger
+
 	// RWMutex Locks used to connect to rabbit (Init method)
 	// RWMutex RLocks used to use connection
 	mu *sync.RWMutex
@@ -31,7 +32,8 @@ func New(rabbitConfig RabbitConfig, log logger.Logger) *Publisher {
 		rabbitConfig: rabbitConfig,
 		rabbit:       nil, // Initialized in Init method
 		log:          log,
-		mu:           &sync.RWMutex{},
+
+		mu: &sync.RWMutex{},
 	}
 }
 
@@ -63,6 +65,7 @@ func (p *Publisher) Init(ctx context.Context) error {
 
 	handleChannelClose := func() {
 		closeErr := <-errs // This chan will get a value when rabbit channel will be closed
+
 		p.log.Error(errors.Wrap(closeErr, "rabbit channel closed"))
 
 		if !conn.IsClosed() {
