@@ -51,6 +51,7 @@ func (p *Publisher) Init(ctx, processCtx context.Context) error {
 	defer p.mu.Unlock()
 
 	cfg := p.rabbitConfig
+
 	conn, err := rabbit.Dial(cfg.Host, cfg.User, cfg.Pass, cfg.Vhost, cfg.Amqps)
 	if err != nil {
 		return errors.Wrap(err, "can't connect to rabbit")
