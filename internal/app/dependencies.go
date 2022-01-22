@@ -36,12 +36,14 @@ func makeDependencies(
 		Amqps:          cfg.RabbitAmqps,
 		ReconnectDelay: time.Duration(cfg.RabbitReconnectDelay) * time.Second,
 	}, log)
-	err := publisher.Init(ctx)
+
+	err := publisher.Init(ctx, ctx)
 	if err != nil {
 		return nil, nil, nil, errors.Wrap(err, "can't init publisher")
 	}
 
 	posts := posts.New(mongo, cfg.MongoDatabase, log)
+
 	err = posts.Init(ctx)
 	if err != nil {
 		return nil, nil, nil, errors.Wrap(err, "can't init database")

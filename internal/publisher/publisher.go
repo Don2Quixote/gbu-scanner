@@ -10,6 +10,7 @@ import (
 	"gbu-scanner/internal/scanner"
 
 	"gbu-scanner/pkg/logger"
+	"gbu-scanner/pkg/sleep"
 	"gbu-scanner/pkg/wrappers/rabbit"
 
 	"github.com/pkg/errors"
@@ -43,7 +44,9 @@ func New(rabbitConfig RabbitConfig, log logger.Logger) *Publisher {
 // Init connects to rabbit and gets rabbit channel, after what
 // initializes rabbit's entiies like exchanges, queues etc.
 // It also registers a handler for channel closed event to reconnect.
-func (p *Publisher) Init(ctx context.Context) error {
+// Close handler uses processCtx for it's calls because ctx for Init's call
+// can be another: for example, limited as WithTimeout.
+func (p *Publisher) Init(ctx context.Context, processCtx context.Context) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -79,9 +82,9 @@ func (p *Publisher) Init(ctx context.Context) error {
 		}
 
 		for attempt, isConnected := 1, false; !isConnected; attempt++ {
-			time.Sleep(cfg.ReconnectDelay)
+			sleep.WithContext(processCtx, cfg.ReconnectDelay)
 
-			err := p.Init(ctx)
+			err := p.Init(processCtx, processCtx)
 			if err != nil {
 				p.log.Warn(errors.Wrapf(err, "can't re-init publisher (attempt #%d)", attempt))
 				continue
