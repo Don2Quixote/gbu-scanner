@@ -41,7 +41,7 @@ $ source deployments/local.env
 ```
 Почему one document with posts array instead of one document per one post?
 
-Потому что mongodb's atomic transactions are only available with single document (mongodb is nice choice XDDDDDD)
+Потому что mongodb's atomic transactions are only available with single document (mongodb is nice choice XDDDDDD) <!-- или я просто ничего не понял -->
 
 > [this single-document atomicity obviates the need for multi-document transactions for many practical use cases](https://docs.mongodb.com/manual/core/transactions/#transactions)
 
