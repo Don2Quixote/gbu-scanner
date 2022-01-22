@@ -46,7 +46,7 @@ func New(rabbitConfig RabbitConfig, log logger.Logger) *Publisher {
 // It also registers a handler for channel closed event to reconnect.
 // Close handler uses processCtx for it's calls because ctx for Init's call
 // can be another: for example, limited as WithTimeout.
-func (p *Publisher) Init(ctx context.Context, processCtx context.Context) error {
+func (p *Publisher) Init(ctx, processCtx context.Context) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
