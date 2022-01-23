@@ -39,7 +39,7 @@ func New(blog Blog, publisher Publisher, posts Posts, interval time.Duration, lo
 func (s *Scanner) Scan(ctx context.Context) error {
 	s.log.Info("starting scanning")
 
-	// Loop executes scanning interations with specified inteval (s.interval) until context closed
+	// Loop executes scanning interations with specified inteval (s.interval) until context closed.
 	for isCtxClosed := false; !isCtxClosed; isCtxClosed = sleep.WithContext(ctx, s.interval) {
 		errs := s.scanIteration(ctx)
 		for _, err := range errs {
@@ -67,7 +67,7 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 		return nil
 	}
 
-	// Always returns nil, all errors written to errs slice
+	// Always returns nil, all errors written to errs slice.
 	_ = s.posts.Transaction(ctx, func(txCtx context.Context) error {
 		publihsedPosts, err := s.posts.GetAll(ctx)
 		if err != nil {
@@ -95,8 +95,8 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 			return nil
 		}
 
-		// Publish not published posts from oldest to newest
-		// (in most cases expected only one not published post per scan iteration)
+		// Publish not published posts from oldest to newest.
+		// (in most cases expected only one not published post per scan iteration).
 		for i := len(notPublishedPosts) - 1; i >= 0; i-- {
 			s.log.Infof("publishing post %q", notPublishedPosts[i].Title)
 
@@ -106,8 +106,8 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 				continue
 			}
 
-			// The saddest story - post published, but can't submit this information, so post will be published again
-			// It is a problem "at least once / at most once", where I have chosen "at least once"
+			// The saddest story - post published, but can't submit this information, so post will be published again.
+			// It is a problem "at least once / at most once", where I have chosen "at least once".
 			err = s.posts.Add(ctx, notPublishedPosts[i])
 			if err != nil {
 				errs = append(errs, errors.Wrap(err, "can't add published post"))
