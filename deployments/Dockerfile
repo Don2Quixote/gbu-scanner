@@ -11,4 +11,6 @@ RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /binary ./cmd
 # Copies executable from first stage and declares CMD to execute it
 FROM alpine:3.15
 COPY --from=builder /binary /
+RUN adduser -S noroot
+USER noroot
 ENTRYPOINT ["/binary"]
