@@ -17,7 +17,7 @@ import (
 func Run(ctx context.Context, log logger.Logger) error {
 	log.Info("starting app")
 
-	// Getting configuration
+	// Getting configuration.
 	var cfg appConfig
 	err := config.Parse(&cfg)
 	if err != nil {
@@ -25,25 +25,25 @@ func Run(ctx context.Context, log logger.Logger) error {
 	}
 	cfg.setDefaults(log)
 
-	// Getting required connections/clients
+	// Getting required connections/clients.
 	mongo, err := makeConnections(ctx, cfg)
 	if err != nil {
 		return errors.Wrap(err, "can't make connections")
 	}
 	defer func() {
-		err := mongo.Disconnect(ctx) // Disconnects without error if context closed
+		err := mongo.Disconnect(ctx) // Disconnects without error if context closed.
 		if err != nil {
 			log.Error(errors.Wrap(err, "can't disconnect mongo client"))
 		}
 	}()
 
-	// Making dependencies for scanner
+	// Making dependencies for scanner.
 	blog, publisher, posts, err := makeDependencies(ctx, cfg, mongo, log)
 	if err != nil {
 		return errors.Wrap(err, "can't construct dependencies")
 	}
 
-	// Constructing and launching scanner
+	// Constructing and launching scanner.
 	blogScanInterval := time.Duration(cfg.BlogScanInterval) * time.Second
 	scanner := scanner.New(blog, publisher, posts, blogScanInterval, log)
 	err = scanner.Scan(ctx)
