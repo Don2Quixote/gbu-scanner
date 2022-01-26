@@ -7,7 +7,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /binary ./cmd
 
-# Second stage without compiler in image.
+# Second stage without compiler in image and not root user.
 # Copies executable from first stage and declares CMD to execute it.
 FROM alpine:3.15
 COPY --from=builder /binary /
