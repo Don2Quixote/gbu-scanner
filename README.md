@@ -55,7 +55,8 @@ Also because of mongodb's transactions usage it's [impossible to use standalone 
 | run  | Sources env variables from [deployments/local.env](deployments/local.env) and runs app |
 | stat | Prints stats information about project (packages, files, lines, chars count)           |
 
-Директория [scripts](/scripts) содержит скрипты, которые вызываются командами из [Makefile](Makefile)
+Direcotry [scripts](/scripts) contains scripts which invoked from [Makefile](Makefile)
 
 ## Consumers:
  - [gbu-telegram-bot](https://github.com/don2quixote/gbu-telegram-bot) service
+ - [gbu-queue-api](https://github.com/don2quixote/gbu-queue-api) service
