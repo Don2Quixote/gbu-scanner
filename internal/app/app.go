@@ -46,6 +46,7 @@ func Run(ctx context.Context, log logger.Logger) error {
 	// Constructing and launching scanner.
 	blogScanInterval := time.Duration(cfg.BlogScanInterval) * time.Second
 	scanner := scanner.New(blog, publisher, posts, blogScanInterval, log)
+
 	err = scanner.Scan(ctx)
 	if err != nil {
 		return errors.Wrap(err, "error during scanning")
