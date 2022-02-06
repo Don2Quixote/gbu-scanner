@@ -13,6 +13,7 @@ It uses [mongodb](https://www.mongodb.com/) as a storage for already published p
 | MONGO_HOST                | string | Database host                                                                      |
 | MONGO_USER                | string | Database user                                                                      |
 | MONGO_PASS                | string | Database password                                                                  |
+| MONGO_SRV                 | bool   | Flag to use mongodb+srv protocol instead of mongodb                                |
 | MONGO_DATABASE            | string | Database name                                                                      |
 | RABBIT_HOST               | string | Rabbit host                                                                        |
 | RABBIT_USER               | string | Rabbit user                                                                        |
