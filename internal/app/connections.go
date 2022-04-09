@@ -12,12 +12,12 @@ import (
 func makeConnections(ctx context.Context, cfg appConfig) (*mongo.Client, error) {
 	mongo, err := mongo.Connect(ctx, cfg.MongoHost, cfg.MongoUser, cfg.MongoPass, cfg.MongoSRV)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't connect to mongo")
+		return nil, errors.Wrap(err, "connect to mongo")
 	}
 
 	err = mongo.Ping(ctx, nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't ping mongo")
+		return nil, errors.Wrap(err, "ping mongo")
 	}
 
 	return mongo, nil

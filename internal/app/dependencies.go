@@ -39,14 +39,14 @@ func makeDependencies(
 
 	err := publisher.Init(ctx, ctx)
 	if err != nil {
-		return nil, nil, nil, errors.Wrap(err, "can't init publisher")
+		return nil, nil, nil, errors.Wrap(err, "init publisher")
 	}
 
 	posts := posts.New(mongo, cfg.MongoDatabase, log)
 
 	err = posts.Init(ctx)
 	if err != nil {
-		return nil, nil, nil, errors.Wrap(err, "can't init database")
+		return nil, nil, nil, errors.Wrap(err, "init database")
 	}
 
 	blog := blog.New(cfg.BlogHost, cfg.BlogPath, cfg.BlogHTTPS, &http.Client{

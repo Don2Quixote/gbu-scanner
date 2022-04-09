@@ -59,7 +59,7 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 
 	posts, err := s.blog.GetPosts(ctx)
 	if err != nil {
-		return append(errs, errors.Wrap(err, "can't get posts"))
+		return append(errs, errors.Wrap(err, "get posts"))
 	}
 
 	if len(posts) == 0 {
@@ -71,7 +71,7 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 	_ = s.posts.Transaction(ctx, func(txCtx context.Context) error {
 		publihsedPosts, err := s.posts.GetAll(ctx)
 		if err != nil {
-			errs = append(errs, errors.Wrap(err, "can't get published posts"))
+			errs = append(errs, errors.Wrap(err, "get published posts"))
 		}
 
 		var notPublishedPosts []entity.Post
@@ -102,7 +102,7 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 
 			err = s.publisher.Publish(ctx, notPublishedPosts[i])
 			if err != nil {
-				errs = append(errs, errors.Wrap(err, "can't publish post"))
+				errs = append(errs, errors.Wrap(err, "publish post"))
 				continue
 			}
 
@@ -110,7 +110,7 @@ func (s *Scanner) scanIteration(ctx context.Context) []error {
 			// It is a problem "at least once / at most once", where I have chosen "at least once".
 			err = s.posts.Add(ctx, notPublishedPosts[i])
 			if err != nil {
-				errs = append(errs, errors.Wrap(err, "can't add published post"))
+				errs = append(errs, errors.Wrap(err, "add published post"))
 			}
 		}
 

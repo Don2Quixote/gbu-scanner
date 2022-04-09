@@ -46,12 +46,12 @@ func (p *Blog) GetPosts(ctx context.Context) ([]entity.Post, error) {
 	url := fmt.Sprintf("%s://%s%s", p.protocol, p.host, p.blogPath)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't create request")
+		return nil, errors.Wrap(err, "create request")
 	}
 
 	res, err := p.httpClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't do request")
+		return nil, errors.Wrap(err, "execute request")
 	}
 	defer res.Body.Close()
 
@@ -61,7 +61,7 @@ func (p *Blog) GetPosts(ctx context.Context) ([]entity.Post, error) {
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't get document from response")
+		return nil, errors.Wrap(err, "get goquery document from response")
 	}
 
 	// Very difficutl to describe with comments, how does this HTML-parsing works.

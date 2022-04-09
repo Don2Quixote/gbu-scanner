@@ -20,7 +20,7 @@ import (
 func Parse(cfg interface{}) error {
 	err := confita.NewLoader(env.NewBackend()).Load(context.Background(), cfg)
 	if err != nil {
-		return errors.Wrap(err, "can't load env vars")
+		return errors.Wrap(err, "load env vars")
 	}
 	return nil
 }

@@ -21,14 +21,14 @@ func Run(ctx context.Context, log logger.Logger) error {
 	var cfg appConfig
 	err := config.Parse(&cfg)
 	if err != nil {
-		return errors.Wrap(err, "can't parse config")
+		return errors.Wrap(err, "parse config")
 	}
 	cfg.setDefaults(log)
 
 	// Getting required connections/clients.
 	mongo, err := makeConnections(ctx, cfg)
 	if err != nil {
-		return errors.Wrap(err, "can't make connections")
+		return errors.Wrap(err, "make connections")
 	}
 	defer func() {
 		err := mongo.Disconnect(ctx) // Disconnects without error if context closed.
@@ -40,7 +40,7 @@ func Run(ctx context.Context, log logger.Logger) error {
 	// Making dependencies for scanner.
 	blog, publisher, posts, err := makeDependencies(ctx, cfg, mongo, log)
 	if err != nil {
-		return errors.Wrap(err, "can't construct dependencies")
+		return errors.Wrap(err, "construct dependencies")
 	}
 
 	// Constructing and launching scanner.
@@ -49,7 +49,7 @@ func Run(ctx context.Context, log logger.Logger) error {
 
 	err = scanner.Scan(ctx)
 	if err != nil {
-		return errors.Wrap(err, "error during scanning")
+		return errors.Wrap(err, "scanning")
 	}
 
 	log.Info("app finished")

@@ -38,7 +38,7 @@ func New(mongo *mongo.Client, database string, log logger.Logger) *Posts {
 func (p *Posts) Init(ctx context.Context) error {
 	res := p.mongoDB.Collection(publishedPostsCollection).FindOne(ctx, bson.D{})
 	if res.Err() != nil && !errors.Is(res.Err(), mongo.ErrNoDocuments) {
-		return errors.Wrap(res.Err(), "can't find document")
+		return errors.Wrap(res.Err(), "find document")
 	}
 
 	if errors.Is(res.Err(), mongo.ErrNoDocuments) {
@@ -46,7 +46,7 @@ func (p *Posts) Init(ctx context.Context) error {
 			{Key: "posts", Value: bson.A{}},
 		})
 		if err != nil {
-			return errors.Wrap(err, "can't insert document")
+			return errors.Wrap(err, "insert document")
 		}
 	}
 
@@ -59,7 +59,7 @@ func (p *Posts) Init(ctx context.Context) error {
 func (p *Posts) Transaction(ctx context.Context, fn func(ctx context.Context) error) error {
 	sess, err := p.mongo.StartSession(options.Session().SetCausalConsistency(true))
 	if err != nil {
-		return errors.Wrap(err, "can't start session")
+		return errors.Wrap(err, "start session")
 	}
 	defer sess.EndSession(ctx)
 
@@ -71,7 +71,7 @@ func (p *Posts) Transaction(ctx context.Context, fn func(ctx context.Context) er
 		return nil, fn(sessCtx)
 	}, txOpts)
 	if err != nil {
-		return errors.Wrap(err, "can't make transaction")
+		return errors.Wrap(err, "make transaction")
 	}
 
 	return nil
@@ -85,7 +85,7 @@ func (p *Posts) Add(ctx context.Context, post entity.Post) error {
 		}},
 	})
 	if err != nil {
-		return errors.Wrap(err, "can't insert post")
+		return errors.Wrap(err, "insert post")
 	}
 	return nil
 }
@@ -94,7 +94,7 @@ func (p *Posts) GetAll(ctx context.Context) ([]entity.Post, error) {
 	// As only one document with posts array in collection - empty filter used
 	res := p.mongoDB.Collection(publishedPostsCollection).FindOne(ctx, bson.D{})
 	if res.Err() != nil {
-		return nil, errors.Wrap(res.Err(), "can't find document")
+		return nil, errors.Wrap(res.Err(), "find document")
 	}
 
 	var doc struct {
@@ -102,7 +102,7 @@ func (p *Posts) GetAll(ctx context.Context) ([]entity.Post, error) {
 	}
 	err := res.Decode(&doc)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't decode document")
+		return nil, errors.Wrap(err, "decode document")
 	}
 
 	return doc.Posts, nil

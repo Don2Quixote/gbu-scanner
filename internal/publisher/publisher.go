@@ -54,17 +54,17 @@ func (p *Publisher) Init(ctx, processCtx context.Context) error {
 
 	conn, err := rabbit.Dial(cfg.Host, cfg.User, cfg.Pass, cfg.Vhost, cfg.Amqps)
 	if err != nil {
-		return errors.Wrap(err, "can't connect to rabbit")
+		return errors.Wrap(err, "connect to rabbit")
 	}
 
 	ch, err := conn.Channel()
 	if err != nil {
-		return errors.Wrap(err, "can't get rabbit channel")
+		return errors.Wrap(err, "get rabbit channel")
 	}
 
 	err = ch.ExchangeDeclare(postsExchange, amqp.ExchangeFanout, true, false, false, false, nil)
 	if err != nil {
-		return errors.Wrap(err, "can't declare exchange")
+		return errors.Wrap(err, "declare exchange")
 	}
 
 	errs := make(chan *amqp.Error)
@@ -113,7 +113,7 @@ func (p *Publisher) Publish(ctx context.Context, post entity.Post) error {
 
 	encoded, err := json.Marshal(post)
 	if err != nil {
-		return errors.Wrap(err, "can't encode post to JSON")
+		return errors.Wrap(err, "encode post to JSON")
 	}
 
 	err = p.rabbit.Publish(postsExchange, "", false, false, amqp.Publishing{
@@ -122,7 +122,7 @@ func (p *Publisher) Publish(ctx context.Context, post entity.Post) error {
 		Body:         encoded,
 	})
 	if err != nil {
-		return errors.Wrap(err, "can't publish message")
+		return errors.Wrap(err, "publish message to rabbit")
 	}
 
 	return nil
