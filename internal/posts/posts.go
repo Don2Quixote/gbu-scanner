@@ -87,6 +87,7 @@ func (p *Posts) Add(ctx context.Context, post entity.Post) error {
 	if err != nil {
 		return errors.Wrap(err, "insert post")
 	}
+
 	return nil
 }
 
@@ -100,6 +101,7 @@ func (p *Posts) GetAll(ctx context.Context) ([]entity.Post, error) {
 	var doc struct {
 		Posts []entity.Post `bson:"posts"`
 	}
+
 	err := res.Decode(&doc)
 	if err != nil {
 		return nil, errors.Wrap(err, "decode document")
